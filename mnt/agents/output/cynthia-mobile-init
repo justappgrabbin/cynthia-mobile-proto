@@ -1,0 +1,6 @@
+cd /mnt/agents/output/cynthia-mobile-proto
+git init
+git add .
+git commit -m "Initial Cynthia"
+git remote add origin https://github.com/YOUR_USERNAME/cynthia-mobile-proto.git
+git push -u origin main
