@@ -1,0 +1,38 @@
+# 1. Go to your project folder
+cd /mnt/agents/output/cynthia-mobile-proto
+
+# 2. Create the workflow folder
+mkdir -p .github/workflows
+
+# 3. Create the workflow file
+cat > .github/workflows/build-apk.yml << 'EOF'
+name: Build Cynthia APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - run: eas build --platform android --profile preview --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+EOF
+
+# 4. Initialize git and push
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/cynthia-mobile-proto.git
+git push -u origin main
