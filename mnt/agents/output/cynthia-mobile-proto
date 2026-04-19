@@ -1,9 +1,0 @@
-# On your computer
-cd /mnt/agents/output/cynthia-mobile-proto  # (or where you saved it)
-
-git init
-git add .
-git commit -m "Initial Cynthia Mobile Proto"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/cynthia-mobile-proto.git
-git push -u origin main
