@@ -1,0 +1,189 @@
+
+# Fix the populate-repo.yml workflow - the issue is EOF inside heredoc
+fixed_populate = """name: 🔱 Populate Cynthia Repo & Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ setup ]
+
+jobs:
+  populate-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Populate Frontend Files
+      run: |
+        echo "🔱 Creating Cynthia Mobile Proto structure..."
+        
+        # Create directories
+        mkdir -p src/screens
+        mkdir -p src/context  
+        mkdir -p src/services
+        mkdir -p src/types
+        mkdir -p src/utils
+        mkdir -p src/constants
+        mkdir -p assets/images
+        mkdir -p .github/workflows
+        
+        echo "✅ Directories created"
+    
+    - name: Create package.json
+      run: |
+        cat > package.json << 'PACKAGEJSON'
+        {
+          "name": "cynthia-mobile-proto",
+          "version": "1.0.0",
+          "main": "expo/AppEntry.js",
+          "scripts": {
+            "start": "expo start",
+            "android": "expo start --android",
+            "ios": "expo start --ios",
+            "web": "expo start --web"
+          },
+          "dependencies": {
+            "expo": "~50.0.0",
+            "expo-status-bar": "~1.11.0",
+            "expo-file-system": "~16.0.0",
+            "expo-document-picker": "~11.10.0",
+            "expo-image-picker": "~14.7.0",
+            "expo-secure-store": "~12.8.0",
+            "expo-notifications": "~0.27.0",
+            "expo-sharing": "~11.10.0",
+            "expo-clipboard": "~5.0.0",
+            "react": "18.2.0",
+            "react-native": "0.73.0",
+            "react-native-gesture-handler": "~2.14.0",
+            "react-native-reanimated": "~3.6.0",
+            "react-native-svg": "14.1.0",
+            "react-native-webview": "13.6.0",
+            "react-native-safe-area-context": "4.8.0",
+            "react-native-screens": "~3.29.0",
+            "react-native-vector-icons": "^10.0.0",
+            "@react-navigation/native": "^6.1.9",
+            "@react-navigation/bottom-tabs": "^6.5.11",
+            "@react-navigation/native-stack": "^6.9.17",
+            "@supabase/supabase-js": "^2.39.0",
+            "@react-native-async-storage/async-storage": "1.21.0",
+            "zustand": "^4.4.7",
+            "axios": "^1.6.2",
+            "uuid": "^9.0.1",
+            "date-fns": "^3.0.0",
+            "react-native-share": "^10.0.0",
+            "react-native-gifted-chat": "^2.4.0",
+            "react-native-markdown-display": "^7.0.0"
+          },
+          "devDependencies": {
+            "@babel/core": "^7.20.0"
+          },
+          "private": true
+        }
+        PACKAGEJSON
+        echo "✅ package.json created"
+    
+    - name: Create app.json
+      run: |
+        cat > app.json << 'APPJSON'
+        {
+          "expo": {
+            "name": "Cynthia Mobile Proto",
+            "slug": "cynthia-mobile-proto",
+            "version": "1.0.0",
+            "orientation": "portrait",
+            "icon": "./assets/images/icon.png",
+            "userInterfaceStyle": "dark",
+            "splash": {
+              "image": "./assets/images/splash.png",
+              "resizeMode": "contain",
+              "backgroundColor": "#0a0a0a"
+            },
+            "assetBundlePatterns": ["**/*"],
+            "ios": {
+              "supportsTablet": true,
+              "bundleIdentifier": "com.cynthia.mobileproto"
+            },
+            "android": {
+              "adaptiveIcon": {
+                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "backgroundColor": "#0a0a0a"
+              },
+              "package": "com.cynthia.mobileproto",
+              "versionCode": 1
+            },
+            "web": {
+              "favicon": "./assets/images/favicon.png"
+            },
+            "plugins": [
+              "expo-secure-store",
+              "expo-notifications",
+              "expo-document-picker",
+              "expo-image-picker"
+            ]
+          }
+        }
+        APPJSON
+        echo "✅ app.json created"
+    
+    - name: Create EAS config
+      run: |
+        cat > eas.json << 'EASJSON'
+        {
+          "cli": {
+            "version": ">= 7.0.0"
+          },
+          "build": {
+            "development": {
+              "developmentClient": true,
+              "distribution": "internal"
+            },
+            "preview": {
+              "distribution": "internal",
+              "android": {
+                "buildType": "apk"
+              }
+            },
+            "production": {
+              "android": {
+                "buildType": "app-bundle"
+              }
+            }
+          }
+        }
+        EASJSON
+        echo "✅ eas.json created"
+    
+    - name: Commit populated files
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add .
+        git diff --cached --quiet || git commit -m "🔱 Populate Cynthia Mobile Proto files"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Trigger Build Workflow
+      run: |
+        echo "🚀 Files populated! Now trigger the build workflow."
+        echo "Go to Actions tab and run 'Build Cynthia APK'"
+"""
+
+with open("/mnt/agents/output/cynthia-mobile-proto/.github/workflows/populate-repo.yml", "w") as f:
+    f.write(fixed_populate)
+
+print("✅ Fixed populate-repo.yml")
+print("Changed EOF to unique markers (PACKAGEJSON, APPJSON, EASJSON)")
+print("This prevents conflicts with the heredoc syntax")
