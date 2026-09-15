@@ -1,0 +1,87 @@
+name: Build Cynthia APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - kimi-automation-repair
+    paths:
+      - 'App.js'
+      - 'app.json'
+      - 'eas.json'
+      - 'package.json'
+      - 'src/**'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate Expo project
+        run: npx expo-doctor@latest || true
+
+      - name: Verify Expo token
+        shell: bash
+        run: |
+          if [ -z "${EXPO_TOKEN:-}" ]; then
+            echo "EXPO_TOKEN repository secret is required for EAS builds."
+            exit 1
+          fi
+
+      - name: Build Android APK with EAS
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx eas-cli@latest build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --wait \
+            --json > eas-build.json
+          cat eas-build.json
+
+      - name: Download built APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          BUILD_URL="$(node -e "const fs=require('fs');const x=JSON.parse(fs.readFileSync('eas-build.json','utf8'));const b=Array.isArray(x)?x[0]:x;const u=b?.artifacts?.buildUrl||b?.artifacts?.applicationArchiveUrl;if(!u)process.exit(2);process.stdout.write(u)")"
+          curl -fL "$BUILD_URL" -o cynthia-mobile-proto.apk
+          test -s cynthia-mobile-proto.apk
+          ls -lh cynthia-mobile-proto.apk
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="cynthia-$(date -u +'%Y%m%d-%H%M%S')"
+          gh release create "$TAG" cynthia-mobile-proto.apk \
+            --title "Cynthia Android APK $TAG" \
+            --notes "Automated Android APK generated from commit $GITHUB_SHA"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cynthia-mobile-proto-apk
+          path: cynthia-mobile-proto.apk
+          if-no-files-found: error

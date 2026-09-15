@@ -1,0 +1,118 @@
+name: Populate Cynthia Repo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  populate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Cynthia project structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p src/screens src/context src/services src/types src/utils src/constants assets .github/workflows
+
+          cat > package.json <<'EOF'
+          {
+            "name": "cynthia-mobile-proto",
+            "version": "1.0.0",
+            "private": true,
+            "main": "node_modules/expo/AppEntry.js",
+            "scripts": {
+              "start": "expo start",
+              "android": "expo start --android",
+              "web": "expo start --web"
+            },
+            "dependencies": {
+              "expo": "~54.0.0",
+              "expo-status-bar": "~3.0.0",
+              "react": "19.1.0",
+              "react-native": "0.81.4"
+            },
+            "devDependencies": {
+              "@babel/core": "^7.25.0"
+            }
+          }
+          EOF
+
+          cat > app.json <<'EOF'
+          {
+            "expo": {
+              "name": "Cynthia Mobile Proto",
+              "slug": "cynthia-mobile-proto",
+              "version": "1.0.0",
+              "orientation": "portrait",
+              "userInterfaceStyle": "dark",
+              "android": {
+                "package": "com.cynthia.mobileproto",
+                "versionCode": 1
+              }
+            }
+          }
+          EOF
+
+          cat > eas.json <<'EOF'
+          {
+            "cli": {
+              "version": ">= 16.0.0"
+            },
+            "build": {
+              "preview": {
+                "distribution": "internal",
+                "android": {
+                  "buildType": "apk"
+                }
+              },
+              "production": {
+                "android": {
+                  "buildType": "app-bundle"
+                }
+              }
+            }
+          }
+          EOF
+
+          cat > App.js <<'EOF'
+          import React from 'react';
+          import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+
+          export default function App() {
+            return (
+              <SafeAreaView style={styles.root}>
+                <StatusBar barStyle="light-content" />
+                <View style={styles.body}>
+                  <Text style={styles.title}>Cynthia</Text>
+                  <Text style={styles.text}>GitHub automation is running from the repository itself.</Text>
+                </View>
+              </SafeAreaView>
+            );
+          }
+
+          const styles = StyleSheet.create({
+            root: { flex: 1, backgroundColor: '#08080d' },
+            body: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
+            title: { color: '#f7f0ff', fontSize: 34, fontWeight: '700', marginBottom: 12 },
+            text: { color: '#c8bfd3', fontSize: 16, textAlign: 'center' }
+          });
+          EOF
+
+      - name: Commit generated project
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add App.js package.json app.json eas.json src assets
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Populate Cynthia mobile project"
+            git push
+          fi
