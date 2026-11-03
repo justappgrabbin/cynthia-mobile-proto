@@ -1,0 +1,33 @@
+name: Cynthia Self-Assembler APK
+on:
+  push:
+    branches:
+      - integration/cynthia-self-assembler-20261103
+  workflow_dispatch:
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check assembly engine
+        run: node --test tests/engine.test.cjs
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Compile installable debug APK
+        run: gradle :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cynthia-SelfAssembler-Debug-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
