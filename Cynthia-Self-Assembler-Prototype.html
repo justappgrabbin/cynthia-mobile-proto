@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#11152a"><title>Cynthia · Self Assembler</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f1f1ff;background:#0a0d1a;color-scheme:dark;--edge:#394063;--muted:#a5acce;--blue:#76b2ff;--pink:#f5a5dc}
+*{box-sizing:border-box}body{margin:0;padding:0 0 84px;background:radial-gradient(ellipse at 20% 0,#29234b 0,transparent 35%),#0a0d1a;min-height:100vh}button,input,textarea,select{font:inherit;color:inherit}button{border:1px solid var(--edge);border-radius:12px;padding:12px 15px;background:#283256;cursor:pointer}button:active{transform:scale(.99)}button.primary{background:linear-gradient(115deg,#7a63d9,#3f83c9);color:white;font-weight:700;border:0}button.ghost{background:#141a2f}button:disabled{opacity:.42;cursor:not-allowed}header{padding:26px 18px 16px;display:flex;align-items:center;gap:12px;max-width:1000px;margin:auto}.logo{height:48px;width:48px;border-radius:16px;background:linear-gradient(140deg,#c781ef,#5178e2);display:grid;place-items:center;font-size:27px;box-shadow:0 0 24px #a17bfa44}.brand{font-size:1.35rem;font-weight:800;letter-spacing:.2px}.sub{font-size:.81rem;color:var(--muted)}main{max-width:1000px;margin:auto;padding:0 14px}.tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px}.tabs button{flex:1;white-space:nowrap;font-size:.88rem;padding:10px}.tabs button.active{background:#38345d;border-color:#a58ef6}.panel{border:1px solid #303653;border-radius:20px;background:#151b31dd;padding:18px;margin:12px 0;box-shadow:0 10px 30px #0002}.panel h2{margin:0 0 8px;font-size:1.05rem}.panel p{color:var(--muted);font-size:.92rem;line-height:1.45;margin:7px 0 16px}label{display:block;margin:13px 0 7px;color:#d6d9f0;font-size:.87rem;font-weight:600}input[type=text],input[type=url],textarea{display:block;width:100%;border:1px solid #444c71;background:#0c1226;border-radius:12px;padding:12px;outline-offset:2px}textarea{min-height:106px;resize:vertical;line-height:1.45}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.actions button{flex:1;min-width:112px}.filebox{border:1px dashed #7772aa;border-radius:14px;padding:14px;background:#181f39}.filebox input{max-width:100%;font-size:.82rem}.tiny{font-size:.78rem;color:var(--muted)}.file{padding:10px 12px;background:#242b46;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;gap:8px;align-items:center;overflow-wrap:anywhere}.file button{padding:5px 9px;font-size:.77rem}.notice{white-space:pre-wrap;background:#21294a;border-left:3px solid #86abff;padding:12px;border-radius:9px;font-size:.86rem;line-height:1.4}.error{border-left-color:#ff779d}iframe{display:block;width:100%;height:315px;border:1px solid #4a527b;border-radius:12px;background:white}.library-card{padding:14px;border:1px solid #3d4569;border-radius:14px;margin:10px 0;background:#202743}.library-card h3{margin:0;font-size:.99rem}.library-card .actions{margin-top:8px}.tag{font-size:.72rem;border-radius:999px;color:#e5e8ff;background:#3a4163;padding:3px 9px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}.metric{text-align:center;background:#242d4e;border-radius:12px;padding:12px 4px}.metric b{font-size:1.2rem;display:block}.metric span{font-size:.7rem;color:var(--muted)}.hidden{display:none!important}footer{color:#898eae;text-align:center;padding:12px;font-size:.72rem}code{color:#bed3ff}#globalStatus{font-size:.76rem;margin-left:auto;color:#94d7b6}@media(min-width:700px){.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{margin:0 0 14px}.two>.panel{min-width:0}iframe{height:420px}}
+</style></head>
+<body><header><div class="logo" aria-hidden="true">✦</div><div><div class="brand">Cynthia <span style="color:#c7b4ff">Self Assembler</span></div><div class="sub">Import · Assemble · Test · Install · Keep</div></div><div id="globalStatus">Local</div></header>
+<main>
+<nav class="tabs" aria-label="Sections"><button class="active" data-tab="build">Builder</button><button data-tab="library">Library</button><button data-tab="tools">My tools</button><button data-tab="ai">AI assist</button></nav>
+<section id="build" class="tab"><div class="two"><article class="panel"><h2>Assemble an app</h2><p>Load existing HTML, CSS or JavaScript. Cynthia combines browser-ready source, checks syntax and produces a runnable HTML application. Original files stay in your project.</p><label for="projectTitle">Project name</label><input id="projectTitle" type="text" value="My Cynthia App" maxlength="100"><label>Upload your own source</label><div class="filebox"><input id="filePicker" type="file" multiple accept=".html,.htm,.css,.js,.mjs,.json,.txt,.md,.svg"><div class="tiny">Supported: HTML, CSS, JS, JSON, SVG, text, Markdown · up to 2 MB each</div></div><label for="sourceName">Or paste a source file</label><input id="sourceName" type="text" value="index.html" placeholder="index.html"><textarea id="sourceText" spellcheck="false" placeholder="Paste HTML, JavaScript, CSS or JSON here"></textarea><div class="actions"><button class="ghost" id="pasteFile">Add pasted file</button><button class="ghost" id="clearFiles">Clear files</button></div><div id="fileList" aria-live="polite"></div><div class="actions"><button class="primary" id="assembleBtn">Assemble + test</button></div></article>
+<article class="panel"><h2>Live isolated preview</h2><p>Generated apps execute inside a restricted preview frame, separate from Cynthia's project library.</p><iframe id="preview" sandbox="allow-scripts" title="Generated app preview" referrerpolicy="no-referrer"></iframe><div id="report" class="notice" role="status">Add source files or assemble a starter project.</div><div class="actions"><button class="primary" id="saveProject" disabled>Save version</button><button id="installProject" disabled>Install as tool</button><button id="exportHtml" disabled>Export HTML</button></div></article></div></section>
+<section id="library" class="tab hidden"><article class="panel"><h2>Persistent project library</h2><p>Saved projects stay on this device. Each project retains its source, compiled HTML and last five versions for rollback. Export a backup before clearing app data.</p><div class="grid"><div class="metric"><b id="countProjects">0</b><span>Projects</span></div><div class="metric"><b id="countTools">0</b><span>Installed tools</span></div><div class="metric"><b id="countRevisions">0</b><span>Versions</span></div></div><label for="backupPicker">Restore a Cynthia project file</label><input id="backupPicker" type="file" accept=".json,application/json"><div id="libraryList"></div></article></section>
+<section id="tools" class="tab hidden"><article class="panel"><h2>Tools Cynthia assembled</h2><p>Install a tested project to make it a launchable Cynthia tool. Tool code is isolated from the host, and removing a tool does not delete its project.</p><div id="toolsList"></div></article></section>
+<section id="ai" class="tab hidden"><article class="panel"><h2>Optional local AI assistance</h2><p>Connect an OpenAI-compatible chat endpoint such as your own LlamaFile or Ollama server. Cynthia sends only the project source and instructions when you press <b>Propose changes</b>. No model is bundled and AI replies are proposals, never automatic updates.</p><label for="aiUrl">Model endpoint base URL</label><input type="url" id="aiUrl" placeholder="http://localhost:11434" autocomplete="off"><label for="aiModel">Model name</label><input type="text" id="aiModel" placeholder="Your locally installed model"><label for="aiPrompt">What should Cynthia add or repair?</label><textarea id="aiPrompt" placeholder="Add a save button, preserve existing features, and explain the changes."></textarea><div class="actions"><button class="primary" id="proposeBtn">Propose changes</button><button id="applyProposal" disabled>Review + apply proposal</button></div><div id="aiResult" class="notice">No proposal yet. An endpoint is optional; the builder works offline without AI.</div></article></section>
+</main><footer>Original sources are preserved in each project · no automatic publishing or overwrites · Cynthia prototype v0.1</footer>
+<script>
+/* Cynthia Self-Assembler — deterministic, local assembly engine. */
+(function (root, factory) {
+  const engine = factory();
+  if (typeof module === 'object' && module.exports) module.exports = engine;
+  root.CynthiaEngine = engine;
+})(typeof window !== 'undefined' ? window : globalThis, function () {
+  'use strict';
+  const MAX_FILES = 40;
+  const MAX_FILE_SIZE = 2 * 1024 * 1024;
+  const EXT = /\.(html?|css|m?js|json|txt|md|svg)$/i;
+
+  function cleanName(value) {
+    return String(value || 'untitled').trim().replace(/[^a-z0-9._-]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 72) || 'untitled';
+  }
+  function validName(name) {
+    return typeof name === 'string' && !!name && !name.includes('..') && !name.startsWith('/') && !name.includes('\\') && EXT.test(name);
+  }
+  function normalizeFiles(files) {
+    if (!Array.isArray(files) || files.length > MAX_FILES) throw new Error('Select 1–40 supported files.');
+    const output = [];
+    const seen = new Set();
+    for (const file of files) {
+      const name = String(file.name || '');
+      const content = String(file.content ?? '');
+      if (!validName(name)) throw new Error('Unsupported or unsafe file name: ' + name);
+      if (new TextEncoder().encode(content).length > MAX_FILE_SIZE) throw new Error(name + ' exceeds the 2 MB limit.');
+      if (seen.has(name)) throw new Error('Duplicate file: ' + name);
+      seen.add(name);
+      output.push({ name, content });
+    }
+    return output;
+  }
+  function check(files) {
+    const issues = [], warnings = [];
+    const normalized = normalizeFiles(files);
+    for (const file of normalized) {
+      if (/\.json$/i.test(file.name)) {
+        try { JSON.parse(file.content); } catch (error) { issues.push(file.name + ': JSON ' + error.message); }
+      }
+      if (/\.m?js$/i.test(file.name)) {
+        if (/\b(?:import|export)\s/m.test(file.content)) {
+          warnings.push(file.name + ': ES module imports/exports need bundling and are preserved but not executed.');
+        } else {
+          try { new Function(file.content); } catch (error) { issues.push(file.name + ': JavaScript ' + error.message); }
+        }
+      }
+    }
+    if (!normalized.some(f => /\.html?$/i.test(f.name))) warnings.push('No HTML supplied; Cynthia creates a minimal starter page.');
+    if (normalized.some(f => /\.(?:py|ts|tsx|jsx)$/i.test(f.name))) warnings.push('Non-browser sources need an external compiler.');
+    return { files: normalized, issues, warnings, ok: issues.length === 0 };
+  }
+  function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function assemble(title, input) {
+    const report = check(input);
+    if (!report.ok) throw new Error(report.issues.join('\n'));
+    const html = report.files.find(f => f.name === 'index.html') || report.files.find(f => /\.html?$/i.test(f.name));
+    let body = html ? html.content : '<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body><h1>' + escapeHtml(title) + '</h1></body></html>';
+    const css = report.files.filter(f => /\.css$/i.test(f.name)).map(f => '\n/* ' + f.name.replace(/\*\//g,'') + ' */\n' + f.content.replace(/<\/style/gi,'<\\/style')).join('\n');
+    const js = report.files.filter(f => /\.m?js$/i.test(f.name) && !/\b(?:import|export)\s/m.test(f.content)).map(f => '\n// ' + f.name.replace(/[\r\n]/g,' ') + '\n' + f.content.replace(/<\/script/gi,'<\\/script')).join('\n');
+    const csp = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; img-src data: blob:; font-src data:;">';
+    const head = csp + (css ? '<style>' + css + '</style>' : '');
+    if (/<\/head\s*>/i.test(body)) body = body.replace(/<\/head\s*>/i, head + '</head>');
+    else body = body.replace(/<body([^>]*)>/i, '<head>' + head + '</head><body$1>');
+    if (!body.includes(csp)) body = '<!doctype html><html><head>' + head + '</head><body>' + body + '</body></html>';
+    const script = js ? '<script>' + js + '<\/script>' : '';
+    if (/<\/body\s*>/i.test(body)) body = body.replace(/<\/body\s*>/i, script + '</body>');
+    else body += script;
+    return { html: body, report: { ...report, included: report.files.filter(f => /\.(html?|css|m?js)$/i.test(f.name)).map(f => f.name), sourceCount: report.files.length } };
+  }
+  function parseProject(text) {
+    const p = JSON.parse(text);
+    if (!p || p.schema !== 'cynthia.project.v1' || !p.title) throw new Error('Not a Cynthia project v1 export.');
+    return { title: String(p.title).slice(0, 100), files: normalizeFiles(p.files || []) };
+  }
+  return { cleanName, normalizeFiles, check, assemble, parseProject, MAX_FILES, MAX_FILE_SIZE };
+});
+
+</script><script>
+(function () {
+'use strict';
+const E = window.CynthiaEngine;
+const $ = id => document.getElementById(id);
+const state = { files: [], html:'', projects:[], current:null, pending:null, db:null };
+const defaultPreview = '<html><body style="font-family:system-ui;padding:22px;color:#283050"><h2>Cynthia is ready</h2><p>Assemble source code to test it here.</p></body></html>';
+$('preview').srcdoc = defaultPreview;
+function status(msg, bad=false) { $('report').textContent=msg; $('report').className='notice'+(bad?' error':''); }
+function aiStatus(msg,bad=false){$('aiResult').textContent=msg;$('aiResult').className='notice'+(bad?' error':'');}
+function buttonState(){const enabled=!!state.html;for(const id of ['saveProject','installProject','exportHtml']) $(id).disabled=!enabled;}
+function newId() {return 'p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);}
+function safeName(text){return E.cleanName(text).replace(/\.html?$/i,'')+'.html';}
+function openDB(){return new Promise(resolve=>{if(!('indexedDB' in window))return resolve(null);let req;try{req=indexedDB.open('cynthia-self-assembler',1);}catch{return resolve(null);}req.onupgradeneeded=()=>req.result.createObjectStore('projects',{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>resolve(null);});}
+function dbRequest(mode,fn){return new Promise((resolve,reject)=>{if(!state.db)return reject(new Error('Device storage unavailable'));const t=state.db.transaction('projects',mode);const r=fn(t.objectStore('projects'));r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+async function loadProjects(){try{state.projects=await dbRequest('readonly',s=>s.getAll());}catch{try{state.projects=JSON.parse(localStorage.getItem('cynthiaProjects')||'[]');}catch{state.projects=[];}}renderLibrary();}
+async function persist(p){if(state.db){await dbRequest('readwrite',s=>s.put(p));}else{const str=JSON.stringify(state.projects);localStorage.setItem('cynthiaProjects',str);}}
+async function removePersisted(id){if(state.db)await dbRequest('readwrite',s=>s.delete(id));else localStorage.setItem('cynthiaProjects',JSON.stringify(state.projects));}
+function addFile(name,content){let existing=state.files.findIndex(f=>f.name===name);const file={name,content};const trial=state.files.slice();if(existing!==-1)trial[existing]=file;else trial.push(file);E.normalizeFiles(trial);state.files=trial;state.html='';state.pending=null;buttonState();renderFiles();status('File added: '+name+' · assemble to verify.');}
+function renderFiles(){const host=$('fileList');host.replaceChildren();state.files.forEach((f,i)=>{const row=document.createElement('div');row.className='file';const name=document.createElement('span');name.textContent=f.name+' · '+new Blob([f.content]).size+' bytes';const del=document.createElement('button');del.textContent='Remove';del.onclick=()=>{state.files.splice(i,1);state.html='';buttonState();renderFiles();};row.append(name,del);host.append(row);});}
+function assemble(){try{const out=E.assemble($('projectTitle').value.trim()||'My Cynthia App',state.files);state.html=out.html;$('preview').srcdoc=out.html;buttonState();const r=out.report;status('PASS · '+r.sourceCount+' source files · browser-ready: '+(r.included.join(', ')||'starter page')+(r.warnings.length?'\nNotes: '+r.warnings.join(' · '):'')+'\nPreview is isolated. No APK has been generated.');return true;}catch(e){state.html='';buttonState();status('ASSEMBLY FAILED · '+e.message,true);return false;}}
+function revision(){return {created:new Date().toISOString(),files:structuredClone(state.files),html:state.html};}
+async function save(install=false){if(!state.html)return;const title=$('projectTitle').value.trim()||'My Cynthia App';let project=state.current&&state.projects.find(p=>p.id===state.current);if(!project){project={id:newId(),title,installed:false,versions:[]};state.projects.push(project);state.current=project.id;}project.title=title;project.versions.push(revision());project.versions=project.versions.slice(-5);if(install)project.installed=true;try{await persist(project);status('Saved '+title+' · version '+project.versions.length+(install?' · installed as Cynthia tool':'')+'.');renderLibrary();}catch(e){status('Save failed: '+e.message+'. Export a backup instead.',true);}}
+function restore(project,index){const ver=project.versions[index];if(!ver)return;state.current=project.id;state.files=structuredClone(ver.files);state.html=ver.html;$('projectTitle').value=project.title;$('preview').srcdoc=state.html||defaultPreview;renderFiles();buttonState();setTab('build');status('Restored '+project.title+' · version '+(index+1)+'. Reassemble before editing or save to make a new version.');}
+function setTab(tab){document.querySelectorAll('section.tab').forEach(el=>el.classList.toggle('hidden',el.id!==tab));document.querySelectorAll('[data-tab]').forEach(el=>el.classList.toggle('active',el.dataset.tab===tab));}
+function makeBtn(text,fn){const b=document.createElement('button');b.textContent=text;b.className='ghost';b.onclick=fn;return b;}
+function renderLibrary(){const host=$('libraryList');host.replaceChildren();const tools=$('toolsList');tools.replaceChildren();$('countProjects').textContent=state.projects.length;$('countTools').textContent=state.projects.filter(p=>p.installed).length;$('countRevisions').textContent=state.projects.reduce((n,p)=>n+p.versions.length,0);if(!state.projects.length)host.textContent='No saved apps yet. Build and save your first project.';
+state.projects.slice().reverse().forEach(p=>{const card=document.createElement('div');card.className='library-card';const h=document.createElement('h3');h.textContent=p.title;const meta=document.createElement('div');meta.className='tiny';meta.textContent=p.versions.length+' saved version(s) · '+(p.installed?'Installed tool':'In library');const acts=document.createElement('div');acts.className='actions';acts.append(makeBtn('Open',()=>restore(p,p.versions.length-1)),makeBtn('Export source',()=>download(p.title+'.cynthia.json',JSON.stringify({schema:'cynthia.project.v1',title:p.title,files:p.versions.at(-1).files},null,2),'application/json')),makeBtn('Versions',()=>{const v=prompt('Choose version 1–'+p.versions.length,p.versions.length);if(v!==null&&Number.isInteger(+v)&&+v>=1&&+v<=p.versions.length)restore(p,+v-1);}),makeBtn(p.installed?'Uninstall tool':'Install tool',async()=>{p.installed=!p.installed;try{await persist(p);renderLibrary();}catch(e){alert(e.message);}}));card.append(h,meta,acts);host.append(card);
+if(p.installed){const tool=document.createElement('div');tool.className='library-card';const t=document.createElement('h3');t.textContent=p.title;const b=makeBtn('Launch in isolated preview',()=>restore(p,p.versions.length-1));tool.append(t,b);tools.append(tool);}});
+if(!tools.childNodes.length)tools.textContent='No tools installed yet. Assemble a project and tap Install as tool.';}
+function download(filename,text,mime){if(window.CynthiaNative&&typeof window.CynthiaNative.saveDocument==='function'){window.CynthiaNative.saveDocument(filename,text);return;}const url=URL.createObjectURL(new Blob([text],{type:mime}));const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+async function askModel(){const endpoint=$('aiUrl').value.trim(),model=$('aiModel').value.trim(),instruction=$('aiPrompt').value.trim();if(!endpoint||!model||!instruction)return aiStatus('Enter an endpoint, model name and instruction.',true);if(!/^https?:\/\//i.test(endpoint))return aiStatus('Enter a full http(s) URL.',true);if(!state.files.length)return aiStatus('Import or paste at least one source file first.',true);$('proposeBtn').disabled=true;aiStatus('Contacting your configured model… (your source is sent only to that endpoint)');try{const response=await fetch(endpoint.replace(/\/+$/,'')+'/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:'You propose changes to an existing small web project. Return ONLY valid JSON in format {"files":[{"name":"index.html","content":"..."}],"explanation":"..."}. Include COMPLETE updated files. Do not replace unrelated files. Do not claim execution or tests.'},{role:'user',content:'Request: '+instruction+'\nSource: '+JSON.stringify(state.files).slice(0,30000)}]})});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();let text=String(data.choices?.[0]?.message?.content||'').trim().replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,'');const proposal=JSON.parse(text);const files=E.normalizeFiles(proposal.files);const full=state.files.filter(f=>!files.some(g=>g.name===f.name)).concat(files);const validation=E.check(full);if(!validation.ok)throw new Error('Generated syntax errors: '+validation.issues.join('; '));state.pending=full;$('applyProposal').disabled=false;aiStatus('PROPOSED · '+files.map(f=>f.name).join(', ')+'\n'+String(proposal.explanation||'').slice(0,700)+'\nReview + apply stages these changes locally. Nothing has been saved or deployed.');}catch(e){state.pending=null;$('applyProposal').disabled=true;aiStatus('AI request failed: '+e.message+'\nCheck that the server is running, reachable, and allows browser requests (CORS).',true);}finally{$('proposeBtn').disabled=false;}}
+$('filePicker').addEventListener('change',async e=>{for(const f of Array.from(e.target.files||[])){try{if(f.size>E.MAX_FILE_SIZE)throw new Error('File exceeds 2 MB');addFile(f.name,await f.text());}catch(error){status(f.name+': '+error.message,true);}}e.target.value='';});
+$('pasteFile').onclick=()=>{try{addFile($('sourceName').value.trim(),$('sourceText').value);}catch(e){status(e.message,true);}};
+$('clearFiles').onclick=()=>{state.files=[];state.html='';state.current=null;buttonState();renderFiles();$('preview').srcdoc=defaultPreview;status('Files cleared; saved projects remain in your library.');};
+$('assembleBtn').onclick=assemble;$('saveProject').onclick=()=>save(false);$('installProject').onclick=()=>save(true);$('exportHtml').onclick=()=>download(safeName($('projectTitle').value),state.html,'text/html');
+$('backupPicker').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const project=E.parseProject(await f.text());state.files=project.files;state.html='';state.current=null;$('projectTitle').value=project.title;renderFiles();buttonState();setTab('build');status('Imported '+project.files.length+' original sources. Assemble to test.');}catch(error){alert('Import failed: '+error.message);}e.target.value='';});
+$('proposeBtn').onclick=askModel;$('applyProposal').onclick=()=>{if(!state.pending)return;state.files=state.pending;state.pending=null;$('applyProposal').disabled=true;state.html='';renderFiles();setTab('build');assemble();};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+(async()=>{state.db=await openDB();await loadProjects();try{$('aiUrl').value=localStorage.getItem('cynthia_ai_url')||'';$('aiModel').value=localStorage.getItem('cynthia_ai_model')||'';}catch{}$('globalStatus').textContent=state.db?'Device storage':'Local fallback';})();
+['aiUrl','aiModel'].forEach(id=>$(id).addEventListener('change',()=>{try{localStorage.setItem('cynthia_'+(id==='aiUrl'?'ai_url':'ai_model'),$(id).value.trim());}catch{}}));
+})();
+
+</script></body></html>
